@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+
+  nginx:
+    image: nginx:1.17-alpine
+    ports:
+      - "85:80"
+    volumes:
+      - ./src/:/var/www
+      - ./data/nginx/default.conf:/etc/nginx/conf.d/default.conf
+#      restart: always
+#      tty: true
+
+  admin:
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    image: php:8.1.5-fpm-alpine3.15
+#    restart: always
+#    tty: true
+    environment:
+      SERVICE_NAME: admin
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    ports:
+      - "9004:9000"
+    volumes:
+      - ./src/:/var/www
+      - ./data/php:/usr/local/etc/php/conf.d/local.ini
